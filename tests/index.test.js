@@ -119,3 +119,60 @@ describe("user metadata enpoints", () => {
     expect(responce.status).tobe(403);
   });
 });
+
+describe("user avatar information", () => {
+  let token = "";
+  let avatarId;
+  let userId;
+  beforeAll(async () => {
+    const singupResponce = await axios.post(`${BACKEND_URL}/api/v1/singup`, {
+      username,
+      password,
+      type,
+    });
+
+    userId = singupResponce.data.userId;
+
+    const singinResponce = await axios.post(`${BACKEND_URL}/api/v1/singin`, {
+      username,
+      password,
+      type,
+    });
+
+    token = singinResponce.data.token;
+
+    const avatarResponce = axios.post(
+      `${BACKEND_URL / api / v1 / admin / avatar}`,
+      {
+        imageUrl: "ImageUrl",
+        name: "jimmy",
+      },
+      {
+        headers: {
+          autherization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    avatarId = avatarResponce.data.avatarId;
+  });
+
+  test("get user avatar information", async () => {
+    const response = await axios.get(
+      `${BACKEND_URL}/api/v1/user/metadata/bulk?ids=[${userId}]`
+    );
+
+    expect(response.data.avatars.length).toBe(1);
+    expect(response.data.avatars[0].userId).toBe(userId);
+  });
+
+  test("available avatar lists the recently created avatar", async()=> {
+    const responce = axios.get(`${BACKEND_URL}/api/v1/avatars`);
+
+    expect(responce.data.avatars.length).not.tobe(0);
+
+    const currentAvatar = (await responce).data.avatars.find(x => x.id == avatarId);
+    expect(currentAvatar).tobeDefined();
+  })
+
+});
