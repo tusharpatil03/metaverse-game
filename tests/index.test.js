@@ -1,13 +1,14 @@
 const { default: axios } = require("axios");
 
 const BACKEND_URL = "http://localhost:8080/";
-const username = "Tushar" + Math.floor(Math.random() * 9) + 1;
-const password = "Tushar1234";
-const type = "admin";
 
 describe("Authenticatio", function () {
+  const username = "Tushar" + Math.floor(Math.random() * 9) + 1;
+  const password = "Tushar1234";
+  const type = "admin";
+
   test("user is able to signup only once", async () => {
-    const res = await axios.post(`${BACKEND_URL}/api/v1/login`, {
+    const res = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
       username,
       password,
       type,
@@ -15,7 +16,7 @@ describe("Authenticatio", function () {
 
     expect(res.status).tobe(200);
 
-    const newRes = await axios.post(`${BACKEND_URL}/api/v1/user/login`, {
+    const newRes = await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
       username,
       password,
       type,
@@ -25,7 +26,7 @@ describe("Authenticatio", function () {
   });
 
   test("user is able to login", async () => {
-    const res = await axios.post(`${BACKEND_URL}/api/v1/login`, {
+    const res = await axios.post(`${BACKEND_URL}/api/v1/singin`, {
       username,
       password,
       type,
@@ -46,6 +47,10 @@ describe("user metadata enpoints", () => {
   let token = "";
   let avatarId;
   beforeAll(async () => {
+    const username = "Tushar" + Math.floor(Math.random() * 9) + 1;
+    const password = "Tushar1234";
+    const type = "admin";
+
     await axios.post(`${BACKEND_URL}/api/v1/singup`, {
       username,
       password,
@@ -61,7 +66,7 @@ describe("user metadata enpoints", () => {
     token = responce.data.token;
 
     const avatarResponce = axios.post(
-      `${BACKEND_URL / api / v1 / admin / avatar}`,
+      `${BACKEND_URL}/api/v1/admin/avatar`,
       {
         imageUrl: "ImageUrl",
         name: "jimmy",
@@ -78,7 +83,7 @@ describe("user metadata enpoints", () => {
 
   test("user can't update there metadata with wrong avatarId", async () => {
     const responce = await axios.post(
-      `${BACKEND_URL / api / v1 / user / metadata}`,
+      `${BACKEND_URL}/api/v1/user/metadata`,
       {
         avatarId: "120293020",
       },
@@ -94,7 +99,7 @@ describe("user metadata enpoints", () => {
 
   test("User can update there metadata with valid id", async () => {
     const responce = await axios.post(
-      `${BACKEND_URL / api / v1 / user / metadata}`,
+      `${BACKEND_URL}/api/v1/user/metadata`,
       {
         avatarId,
       },
@@ -109,12 +114,9 @@ describe("user metadata enpoints", () => {
   });
 
   test("User can't update there metadata without authorization", async () => {
-    const responce = await axios.post(
-      `${BACKEND_URL / api / v1 / user / metadata}`,
-      {
-        avatarId,
-      }
-    );
+    const responce = await axios.post(`${BACKEND_URL}/api/v1/user/metadata`, {
+      avatarId,
+    });
 
     expect(responce.status).tobe(403);
   });
@@ -125,6 +127,10 @@ describe("user avatar information", () => {
   let avatarId;
   let userId;
   beforeAll(async () => {
+    const username = "Tushar" + Math.floor(Math.random() * 9) + 1;
+    const password = "Tushar1234";
+    const type = "admin";
+    
     const singupResponce = await axios.post(`${BACKEND_URL}/api/v1/singup`, {
       username,
       password,
@@ -142,7 +148,7 @@ describe("user avatar information", () => {
     token = singinResponce.data.token;
 
     const avatarResponce = axios.post(
-      `${BACKEND_URL / api / v1 / admin / avatar}`,
+      `${BACKEND_URL}/api/v1/admin/avatar`,
       {
         imageUrl: "ImageUrl",
         name: "jimmy",
@@ -166,13 +172,14 @@ describe("user avatar information", () => {
     expect(response.data.avatars[0].userId).toBe(userId);
   });
 
-  test("available avatar lists the recently created avatar", async()=> {
+  test("available avatar lists the recently created avatar", async () => {
     const responce = axios.get(`${BACKEND_URL}/api/v1/avatars`);
 
     expect(responce.data.avatars.length).not.tobe(0);
 
-    const currentAvatar = (await responce).data.avatars.find(x => x.id == avatarId);
+    const currentAvatar = (await responce).data.avatars.find(
+      (x) => x.id == avatarId
+    );
     expect(currentAvatar).tobeDefined();
-  })
-
+  });
 });
