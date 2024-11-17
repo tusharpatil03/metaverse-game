@@ -972,5 +972,3 @@ describe("admin endpoint", () => {
     expect(updateElementResponse.status).toBe(200);
   });
 });
-
-
