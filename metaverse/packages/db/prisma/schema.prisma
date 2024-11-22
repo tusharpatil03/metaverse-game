@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  avatarId  String?
+  role      Role
+  spaces    Space[]   @relation("SpaceCreater")
+  avatar    Avatar?   @relation(fields: [avatarId], references: [id])
+}
+
+model Map {
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  name      String
+  width     Int
+  height    Int
+  thumbnail String
+  elements  ElementMap[]
+  spaces    Space[]
+}
+
+model Space {
+  id        String         @id @default(cuid())
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  name      String
+  width     Int
+  height    Int
+  thumbnail String?
+  elements  ElementSpace[]
+  createrId String
+  creater   User           @relation("SpaceCreater", fields: [createrId], references: [id])
+  maps      Map[]
+}
+
+model Element {
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  width     Int
+  height    Int
+  imageUrl  String
+  spaces    ElementSpace[]
+  maps      ElementMap[]
+}
+
+model ElementSpace {
+  id        String      @id @default(cuid())
+  x         Int
+  y         Int
+  elementId String
+  spaceId   String
+  element   Element  @relation(fields: [elementId], references: [id])
+  space     Space    @relation(fields: [spaceId], references: [id])
+
+  @@unique([spaceId, x, y])
+}
+
+model ElementMap {
+  id        String     @id @default(cuid())
+  x         Int
+  y         Int
+  elementId String
+  mapId     String
+  element   Element  @relation(fields: [elementId], references: [id])
+  map       Map      @relation(fields: [mapId], references: [id])
+
+  @@unique([mapId, x, y])
+}
+
+model Avatar {
+  id      String @id @default(cuid())
+  name    String
+  image   String
+  users   User[]
+}
+
+enum Role {
+  User
+  Admin
+}
