@@ -1,6 +1,6 @@
 import express from "express";
 import { router } from "./routes/v1/";
-import client from "@repo/db";
+import client from "@repo/db/node_modules/@prisma/client";
 
 const app = express();
 
