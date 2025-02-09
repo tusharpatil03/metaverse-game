@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { updateMetadata, bulk } from "../../controller/user";
+import { getMetadataOfAllUsers, updateMetadata } from "../../controller/user";
+import { userMiddleware } from "../../middleware/validations/userValidation";
 
 const userRouter = Router();
 
-userRouter.post("/metadata", updateMetadata);
+userRouter.put("/metadata", updateMetadata);
 
-userRouter.get("/metadata/bulk", bulk);
+userRouter.get("/metadata/bulk", getMetadataOfAllUsers);
 
 export { userRouter };

@@ -1,24 +1,25 @@
 import { Router } from "express";
-import {
-  addSpace,
-  getSpace,
-  getAllSpaces,
-  addElement,
-  deleteElement,
-} from "../../controller/space";
+import { userMiddleware } from "../../middleware/validations/userValidation";
+import { validator } from "../../middleware/validations/validateInput";
+import { createSpace, getSpace, getAllSpaces, addElementToSpace, deleteElementFromSpace, deleteSpace, getAllMaps, getSpaceElements } from "../../controller/space";
+import { AddElementSchema, CreateSpaceSchema, DeleteElementSchema, deleteSpaceSchema } from "../../types";
+import { isCreaterOfSpaceElement } from "../../middleware/validations/createrOfSpaceElement";
 
 const spaceRouter = Router();
 
-spaceRouter.get("/space/all", getAllSpaces);
+spaceRouter.post("/", userMiddleware, validator(CreateSpaceSchema), createSpace);
 
-spaceRouter.post("/space", addSpace);
+spaceRouter.get("/all", userMiddleware, getAllSpaces);
 
-spaceRouter.get("/space/:spaceId", getSpace);
+spaceRouter.get("/:spaceId", userMiddleware, getSpace);
 
-spaceRouter.delete("/space/:spaceId", getSpace);
+spaceRouter.get("/:spaceId/elements", userMiddleware, getSpaceElements)
 
-spaceRouter.post("/space/element", addElement);
+spaceRouter.post("/delete/:spaceId", userMiddleware, deleteSpace);
 
-spaceRouter.delete("/space/element/:elementId", deleteElement);
+spaceRouter.post("/element", userMiddleware, validator(AddElementSchema), addElementToSpace);
+
+spaceRouter.delete("/element", userMiddleware, validator(DeleteElementSchema),isCreaterOfSpaceElement, deleteElementFromSpace);
+
 
 export { spaceRouter };
