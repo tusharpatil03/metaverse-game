@@ -8,7 +8,13 @@ import { adminMiddleware } from "../../middleware/validations/adminValidation";
 import { validator } from "../../middleware/validations/validateInput";
 import { SigninSchema, SignupSchema } from "../../types";
 
-import { getAllUsers, getAvatars, getUser, userSignin, userSignup } from "../../controller/user";
+import {
+  getAllUsers,
+  getAvatars,
+  getUser,
+  userSignin,
+  userSignup,
+} from "../../controller/user";
 import { getAllElements } from "../../controller/space";
 
 const router = Router();
@@ -23,10 +29,10 @@ router.get("/getAllUser", getAllUsers);
 
 router.get("/avatars", getAvatars);
 
-router.get("/element/all", getAllElements)
+router.get("/element/all", getAllElements);
 
 router.use("/user/", userMiddleware, userRouter);
-router.use("/space/", spaceRouter);
+router.use("/space/", userMiddleware, spaceRouter);
 router.use("/admin", adminMiddleware, adminRouter);
 
 export { router };

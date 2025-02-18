@@ -2,7 +2,11 @@ import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "../../global";
 import { NextFunction, Request, Response } from "express";
 
-export const adminMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const adminMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   const header = req.headers["authorization"];
   const token = header?.split(" ")[1];
   if (!token) {

@@ -24,7 +24,11 @@ export interface CreateMap extends Map {
     elementId: string;
   }[];
 }
-export const createElement = async (req: Request, res: Response, next: NextFunction) => {
+export const createElement = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const data: Element = req.body;
     const element = await client.element.create({
@@ -46,7 +50,11 @@ export const createElement = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const updateElement = async (req: Request, res: Response, next: NextFunction) => {
+export const updateElement = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const elementId = req.params.elementId;
     console.log(elementId);
@@ -77,7 +85,10 @@ export const createAvatar = async (req: Request, res: Response) => {
       });
       return;
     }
-    const avatarId = await UserServices.createUserAvatar(parsedData.data?.name, parsedData.data?.imageUrl);
+    const avatarId = await UserServices.createUserAvatar(
+      parsedData.data?.name,
+      parsedData.data?.imageUrl,
+    );
     if (!avatarId) {
       res.status(400).json({ message: "unable to create avatar" });
       return;
@@ -94,7 +105,11 @@ interface ElementInput {
   x: number;
   y: number;
 }
-export const createMap = async (req: Request, res: Response, next: NextFunction) => {
+export const createMap = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const data = req.body;
     const map = await client.map.create({
@@ -125,7 +140,11 @@ export const createMap = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const deleteMap = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteMap = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const mapId = req.params.mapId;
     const map = await client.map.delete({
@@ -144,7 +163,11 @@ export const deleteMap = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const deleteAvatar = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteAvatar = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.avatarId;
     await client.avatar.delete({
@@ -159,7 +182,11 @@ export const deleteAvatar = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const deleteElement = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteElement = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const id = req.params.elementId;
     await client.element.delete({

@@ -6,7 +6,11 @@ import { Space } from "../services/spaceServices";
 import { SpaceServices } from "../services/spaceServices";
 import { Transaction } from "../services/transactions";
 
-export const createSpace = async (req: Request, res: Response, next: NextFunction) => {
+export const createSpace = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     if (!req.userId) {
       res.status(400).json("Unauthorized");
@@ -19,7 +23,10 @@ export const createSpace = async (req: Request, res: Response, next: NextFunctio
       return;
     }
 
-    const spaceId = await Transaction.spaceAndSpaceElements(req.body, req.userId);
+    const spaceId = await Transaction.spaceAndSpaceElements(
+      req.body,
+      req.userId,
+    );
     res.status(200).json({ id: spaceId });
     return;
   } catch (e) {
@@ -27,7 +34,11 @@ export const createSpace = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const deleteSpace = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteSpace = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const spaceId = req.params.spaceId;
     if (!spaceId) {
@@ -75,8 +86,11 @@ export const deleteSpace = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const getSpace = async (req: Request, res: Response, next: NextFunction) => {
-  console.log("Get Space Rout");
+export const getSpace = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const space = await client.space.findUnique({
     where: {
       id: req.params.spaceId,
@@ -112,7 +126,11 @@ export const getSpace = async (req: Request, res: Response, next: NextFunction) 
   });
 };
 
-export const getAllSpaces = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllSpaces = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     if (!req.userId) {
       return;
@@ -135,14 +153,23 @@ export const getAllSpaces = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const addElementToSpace = async (req: Request, res: Response, next: NextFunction) => {
+export const addElementToSpace = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const space = await SpaceServices.getSpaceById(req.body.spaceId);
   if (!space) {
     res.status(400).json({ message: "Space not found" });
     return;
   }
 
-  if (req.body.x < 0 || req.body.y < 0 || req.body.x > space?.width! || req.body.y > space?.height!) {
+  if (
+    req.body.x < 0 ||
+    req.body.y < 0 ||
+    req.body.x > space?.width! ||
+    req.body.y > space?.height!
+  ) {
     res.status(400).json({ message: "Point is outside of the boundary" });
     return;
   }
@@ -152,7 +179,11 @@ export const addElementToSpace = async (req: Request, res: Response, next: NextF
   res.status(200).json({ message: "Element added" });
 };
 
-export const deleteElementFromSpace = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteElementFromSpace = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     await SpaceServices.deleteSpaceElement(req.body.elementId);
     res.status(200).json("Success");
@@ -162,7 +193,11 @@ export const deleteElementFromSpace = async (req: Request, res: Response, next: 
   }
 };
 
-export const getAllMaps = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllMaps = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const mapsIds = await SpaceServices.findAllMaps();
   if (!mapsIds) {
     res.status(400).json("not found");
@@ -172,7 +207,11 @@ export const getAllMaps = async (req: Request, res: Response, next: NextFunction
   return;
 };
 
-export const getAllElements = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllElements = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const elements = await client.element.findMany({});
   if (!elements) {
     res.status(400).json("not found");
@@ -182,7 +221,11 @@ export const getAllElements = async (req: Request, res: Response, next: NextFunc
   return;
 };
 
-export const getSpaceElements = async (req: Request, res: Response, next: NextFunction) => {
+export const getSpaceElements = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const spaceId = req.params.spaceId;
     const elements = await client.space.findUnique({

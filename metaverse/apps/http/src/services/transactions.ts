@@ -25,8 +25,8 @@ export class Transaction {
 
       return id;
     });
-    if(!spaceId){
-        throw new ErrorHandler(400, "transaction failed");
+    if (!spaceId) {
+      throw new ErrorHandler(400, "transaction failed");
     }
     return spaceId;
   }

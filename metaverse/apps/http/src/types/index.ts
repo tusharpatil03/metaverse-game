@@ -23,6 +23,7 @@ export const CreateSpaceSchema = z.object({
 });
 
 export const DeleteElementSchema = z.object({
+  spaceId: z.string(),
   elementId: z.string(),
 });
 
@@ -63,7 +64,7 @@ export const CreateMapSchema = z.object({
       elementId: z.string(),
       x: z.number(),
       y: z.number(),
-    })
+    }),
   ),
 });
 

@@ -69,11 +69,11 @@ export class SpaceServices {
   static async getSpaceElements(id: string) {
     const spaceElement = await client.spaceElements.findFirst({
       where: {
-        id: id,
+        spaceId: id,
       },
       include: {
         element: true,
-        space: true
+        space: true,
       },
     });
     return spaceElement;

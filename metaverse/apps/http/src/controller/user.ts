@@ -2,9 +2,15 @@ import { Request, Response, NextFunction, response } from "express";
 import { UserServices } from "../services/userServices";
 import { ErrorHandler } from "../services/ErrorHandler";
 
-export const userSignup = async (req: Request, res: Response, next: NextFunction) => {
+export const userSignup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const existingUser = await UserServices.getUserByUsername(req.body.username);
+    const existingUser = await UserServices.getUserByUsername(
+      req.body.username,
+    );
     if (existingUser) {
       throw new ErrorHandler(400, "User already Exist");
     }
@@ -21,7 +27,11 @@ export const userSignup = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const userSignin = async (req: Request, res: Response, next: NextFunction) => {
+export const userSignin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const token = await UserServices.getUserToken(req.body);
     if (!token) {
@@ -35,7 +45,11 @@ export const userSignin = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   const id = req.params.id;
   const user = await UserServices.getUserById(id);
   if (user == null || user == undefined) {
@@ -48,14 +62,21 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
   return;
 };
 
-export const updateMetadata = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMetadata = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (!req.userId) {
     res.status(401).json({ message: "Unautherized" });
     return;
   }
 
   try {
-    const result = await UserServices.updateMetadata(req.userId, req.body.avatarId);
+    const result = await UserServices.updateMetadata(
+      req.userId,
+      req.body.avatarId,
+    );
     if (!result) {
       res.status(400).json({ message: "Unable to update metadata" });
     }
@@ -67,8 +88,10 @@ export const updateMetadata = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-
-export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+export const getAllUsers = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const users = await UserServices.findAllUsers();
     res.status(200).json(users);
@@ -78,7 +101,11 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   return;
 };
 
-export const getMetadataOfAllUsers = async (req: Request, res: Response, next:NextFunction): Promise<void> => {
+export const getMetadataOfAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const userIdString = (req.query.ids ?? "[]") as string;
     const userIds = userIdString.slice(1, userIdString?.length - 1).split(",");
@@ -89,7 +116,11 @@ export const getMetadataOfAllUsers = async (req: Request, res: Response, next:Ne
   }
 };
 
-export const getAvatars = async (req: Request, res: Response, next: NextFunction) => {
+export const getAvatars = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const avatars = await UserServices.getAllAvatars();
     if (!avatars) {

@@ -2,9 +2,7 @@ import client from "@repo/db/client";
 import jwt from "jsonwebtoken";
 import { compare, hash } from "./scrypt";
 import { JWT_PASSWORD } from "../global";
-import { promises } from "node:dns";
 import { ErrorHandler } from "./ErrorHandler";
-import { metadata } from "../controller/user";
 
 export class UserServices {
   static async createUser(data: {
@@ -72,7 +70,7 @@ export class UserServices {
       JWT_PASSWORD,
       {
         expiresIn: Date.now() + 7 * 24 * 60 * 60 * 1000,
-      }
+      },
     );
     return userToken;
   }
@@ -105,16 +103,15 @@ export class UserServices {
         id: true,
       },
     });
-    
+
     return metadata;
   }
 
-  static async getAllAvatars(){
+  static async getAllAvatars() {
     return await client.avatar.findMany({
       select: {
-        id: true
-      }
+        id: true,
+      },
     });
   }
-
 }
