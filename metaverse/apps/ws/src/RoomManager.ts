@@ -1,48 +1,65 @@
-import { User } from "./User";
-import type { outGoingMessage } from "./types";
+import type { User } from "./User";
+import { OutgoingMessage } from "./types";
 
 export class RoomManager {
-  rooms: Map<string, User[]> = new Map();
+    rooms: Map<string, User[]> = new Map();
+    static instance: RoomManager;
 
-  static instance: RoomManager;
-
-  private constructor() {
-    this.rooms = new Map();
-  }
-
-  static getInstance() {
-    if (!this.instance) {
-      this.instance = new RoomManager();
+    private constructor() {
+        this.rooms = new Map();
     }
-    return this.instance;
-  }
 
-  public addUser(spaceId: string, user: User) {
-    if (!this.rooms.has(spaceId)) {
-      this.rooms.set(spaceId, [user]);
-      return;
+    static getInstance() {
+        if (!this.instance) {
+            this.instance = new RoomManager();
+        }
+        return this.instance;
     }
-    this.rooms.set(spaceId, [...(this.rooms.get(spaceId) ?? []), user]);
-  }
 
-  public removeUser(spaceId: string, user: User) {
-    if (!this.rooms.has(spaceId)) {
-      return;
+    public getUser(spaceId: string, userId: string) {
+        return this.rooms.get(spaceId)?.find((u) => u.userId === userId);
     }
-    this.rooms.set(
-      spaceId,
-      this.rooms.get(spaceId)?.filter((u) => u.id !== user.id) ?? [],
-    );
-  }
 
-  public braodcast(message: outGoingMessage, user: User, roomId: string) {
-    if (!this.rooms.has(roomId)) {
-      return;
+    public removeUser(user: User, spaceId: string) {
+        const users = this.rooms.get(spaceId);
+        // If the user never authenticated, they won't have a userId.
+        // In that case, there's no need to broadcast their departure.
+        if (!user.userId) {
+            return;
+        }
+        
+        if (users) {
+            const updatedUsers = users.filter((u) => u.id !== user.id);
+            this.rooms.set(spaceId, updatedUsers);
+            this.broadcast(
+                {
+                    type: "user-left",
+                    payload: {
+                        userId: user.userId!,
+                    },
+                },
+                user,
+                spaceId
+            );
+        }
     }
-    this.rooms.get(roomId)?.forEach((u) => {
-      if (u.id !== user.id) {
-        u.send(message);
-      }
-    });
-  }
+
+    public addUser(spaceId: string, user: User) {
+        if (!this.rooms.has(spaceId)) {
+            this.rooms.set(spaceId, [user]);
+            return;
+        }
+        this.rooms.set(spaceId, [...(this.rooms.get(spaceId) ?? []), user]);
+    }
+
+    public broadcast(message: OutgoingMessage, user: User, roomId: string) {
+        if (!this.rooms.has(roomId)) {
+            return;
+        }
+        this.rooms.get(roomId)?.forEach((u) => {
+            if (u.id !== user.id) {
+                u.send(message);
+            }
+        });
+    }
 }
