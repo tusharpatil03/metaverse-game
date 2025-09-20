@@ -15,6 +15,7 @@
   "dependencies": {
     "@repo/db": "workspace:*",
     "@types/jsonwebtoken": "^9.0.7",
+    "esbuild": "^0.25.10",
     "jsonwebtoken": "^9.0.2",
     "ws": "^8.18.0"
   },

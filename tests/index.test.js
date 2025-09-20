@@ -38,7 +38,7 @@ const axios = {
   },
 };
 
-describe.skip("Authentication", function () {
+describe("Authentication", function () {
   test("user is able to signup only once", async () => {
     const username = "Tushar" + Math.random();
     const password = "Tushar1234";
@@ -138,7 +138,7 @@ describe.skip("Authentication", function () {
   // });
 });
 
-describe.skip("user metadata enpoints", () => {
+describe("user metadata enpoints", () => {
   let token = "";
   let avatarId;
   beforeAll(async () => {
@@ -218,7 +218,7 @@ describe.skip("user metadata enpoints", () => {
   });
 });
 
-describe.skip("user avatar information", () => {
+describe("user avatar information", () => {
   let token = "";
   let avatarId;
   let userId;
@@ -279,7 +279,7 @@ describe.skip("user avatar information", () => {
   });
 });
 
-describe.skip("space information", () => {
+describe("space information", () => {
   let mapId;
   let element1Id;
   let element2Id;
@@ -571,7 +571,7 @@ describe.skip("space information", () => {
   // });
 });
 
-describe.skip("Arena endpoints", () => {
+describe("Arena endpoints", () => {
   let mapId;
   let element1Id;
   let element2Id;
@@ -803,7 +803,7 @@ describe.skip("Arena endpoints", () => {
   });
 });
 
-describe.skip("admin endpoint", () => {
+describe("admin endpoint", () => {
   let adminToken;
   let adminId;
   let userToken;
