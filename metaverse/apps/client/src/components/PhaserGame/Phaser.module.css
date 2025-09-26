@@ -1,0 +1,176 @@
+/* Phaser Game (scoped) */
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  background: #2c3e50;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  position: relative;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.loadingContent {
+  text-align: center;
+  color: white;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.loadingContent p {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.loadingContent small {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.errorContent {
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
+
+.errorContent h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #e74c3c;
+}
+
+.errorContent p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.retryButton {
+  background: rgba(231, 76, 60, 0.8);
+  color: white;
+  border: 1px solid rgba(231, 76, 60, 0.8);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.retryButton:hover {
+  background: rgba(231, 76, 60, 1);
+  transform: translateY(-2px);
+}
+
+.infoOverlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.spaceInfo {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.spaceName {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.spaceDimensions {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.gameStatus {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  color: white;
+}
+
+.statusReady {
+  color: #27ae60;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.statusLoading {
+  color: #f39c12;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.container canvas {
+  display: block;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    min-height: 400px;
+  }
+  .container {
+    min-height: 400px;
+  }
+}
+

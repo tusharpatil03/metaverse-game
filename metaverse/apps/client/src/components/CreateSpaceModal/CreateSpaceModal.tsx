@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useSpace } from '../contexts/SpaceContext';
-import type { CreateSpaceRequest, Space } from '../types/space';
+import { useSpace } from '../../contexts/SpaceContext';
+import type { CreateSpaceRequest, Space } from '../../types/space';
+import styles from './CreateSpaceModal.module.css';
 
 interface CreateSpaceModalProps {
   onClose: () => void;
@@ -88,15 +89,15 @@ const CreateSpaceModal: React.FC<CreateSpaceModalProps> = ({ onClose, onSpaceCre
   };
 
   return (
-    <div className="modal-backdrop" onClick={handleBackdropClick}>
-      <div className="modal-content create-space-modal">
-        <div className="modal-header">
+    <div className={styles.backdrop} onClick={handleBackdropClick}>
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
           <h2>🏗️ Create New Space</h2>
-          <button onClick={onClose} className="close-button">×</button>
+          <button onClick={onClose} className={styles.closeButton}>×</button>
         </div>
 
-        <form onSubmit={handleSubmit} className="create-space-form">
-          <div className="form-group">
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
             <label htmlFor="name">Space Name *</label>
             <input
               type="text"
@@ -105,13 +106,13 @@ const CreateSpaceModal: React.FC<CreateSpaceModalProps> = ({ onClose, onSpaceCre
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter space name"
-              className={errors.name ? 'error' : ''}
+              className={errors.name ? styles.error : ''}
               disabled={isLoading}
             />
-            {errors.name && <span className="error-text">{errors.name}</span>}
+            {errors.name && <span className={styles.errorText}>{errors.name}</span>}
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
@@ -124,8 +125,8 @@ const CreateSpaceModal: React.FC<CreateSpaceModalProps> = ({ onClose, onSpaceCre
             />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
               <label htmlFor="width">Width *</label>
               <input
                 type="number"
@@ -135,13 +136,13 @@ const CreateSpaceModal: React.FC<CreateSpaceModalProps> = ({ onClose, onSpaceCre
                 onChange={handleChange}
                 min="10"
                 max="200"
-                className={errors.width ? 'error' : ''}
+                className={errors.width ? styles.error : ''}
                 disabled={isLoading}
               />
-              {errors.width && <span className="error-text">{errors.width}</span>}
+              {errors.width && <span className={styles.errorText}>{errors.width}</span>}
             </div>
 
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label htmlFor="height">Height *</label>
               <input
                 type="number"
@@ -151,14 +152,14 @@ const CreateSpaceModal: React.FC<CreateSpaceModalProps> = ({ onClose, onSpaceCre
                 onChange={handleChange}
                 min="10"
                 max="200"
-                className={errors.height ? 'error' : ''}
+                className={errors.height ? styles.error : ''}
                 disabled={isLoading}
               />
-              {errors.height && <span className="error-text">{errors.height}</span>}
+              {errors.height && <span className={styles.errorText}>{errors.height}</span>}
             </div>
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="maxUsers">Max Users</label>
             <input
               type="number"
@@ -169,14 +170,14 @@ const CreateSpaceModal: React.FC<CreateSpaceModalProps> = ({ onClose, onSpaceCre
               min="1"
               max="1000"
               placeholder="Leave empty for unlimited"
-              className={errors.maxUsers ? 'error' : ''}
+              className={errors.maxUsers ? styles.error : ''}
               disabled={isLoading}
             />
-            {errors.maxUsers && <span className="error-text">{errors.maxUsers}</span>}
+            {errors.maxUsers && <span className={styles.errorText}>{errors.maxUsers}</span>}
           </div>
 
-          <div className="form-group checkbox-group">
-            <label className="checkbox-label">
+          <div className={`${styles.formGroup} ${styles.checkboxGroup}`}>
+            <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
                 name="isPublic"
@@ -184,24 +185,24 @@ const CreateSpaceModal: React.FC<CreateSpaceModalProps> = ({ onClose, onSpaceCre
                 onChange={handleChange}
                 disabled={isLoading}
               />
-              <span className="checkmark"></span>
+              <span className={styles.checkmark}></span>
               Make this space public
             </label>
             <small>Public spaces can be joined by anyone</small>
           </div>
 
-          <div className="form-actions">
+          <div className={styles.formActions}>
             <button 
               type="button" 
               onClick={onClose} 
-              className="cancel-button"
+              className={styles.cancelButton}
               disabled={isLoading}
             >
               Cancel
             </button>
             <button 
               type="submit" 
-              className="create-button"
+              className={styles.createButton}
               disabled={isLoading}
             >
               {isLoading ? 'Creating...' : 'Create Space'}

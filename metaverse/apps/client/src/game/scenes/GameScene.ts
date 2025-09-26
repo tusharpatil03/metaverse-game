@@ -55,6 +55,11 @@ export class GameScene extends BaseScene {
   handleSceneReady(): void {
     console.log('[GameScene] Scene is ready!');
     
+    // Listen for movement rejection events from WebSocket
+    window.addEventListener('movement-rejected', (event: Event) => {
+      this.handleMovementRejected(event as CustomEvent);
+    });
+    
     // Emit custom events that React can listen to
     this.events.emit('game-scene-ready', {
       space: this.space,
@@ -275,6 +280,102 @@ export class GameScene extends BaseScene {
       this.players.delete(playerId);
       console.log('[GameScene] Removed other player:', playerId);
     }
+  }
+
+  // Public method to clear all other players
+  public clearOtherPlayers(): void {
+    console.log('[GameScene] Clearing all other players');
+    this.players.forEach((player) => {
+      if (player.sprite) {
+        player.sprite.destroy();
+      }
+    });
+    this.players.clear();
+  }
+
+  // Public method to update other player position
+  public updateOtherPlayerPosition(playerId: string, x: number, y: number): void {
+    const player = this.players.get(playerId);
+    if (player && player.sprite) {
+      const worldPos = this.gridToWorld(x, y);
+      
+      // Animate the movement
+      this.tweens.add({
+        targets: player.sprite,
+        x: worldPos.x,
+        y: worldPos.y,
+        duration: 200,
+        ease: 'Power2',
+        onComplete: () => {
+          // Update player data
+          player.x = x;
+          player.y = y;
+          this.players.set(playerId, player);
+        }
+      });
+      
+      console.log('[GameScene] Updated other player position:', playerId, { x, y });
+    }
+  }
+
+  // Handle movement rejection from server
+  private handleMovementRejected(event: CustomEvent): void {
+    const { reason, currentPosition } = event.detail;
+    console.warn('[GameScene] Movement rejected by server:', reason);
+    
+    if (this.player && currentPosition) {
+      // Revert player to server-validated position
+      const worldPos = this.gridToWorld(currentPosition.x, currentPosition.y);
+      
+      // Animate back to correct position
+      this.tweens.add({
+        targets: this.player,
+        x: worldPos.x,
+        y: worldPos.y,
+        duration: 150,
+        ease: 'Power2',
+        onComplete: () => {
+          // Update stored grid position
+          this.registry.set('playerGridPos', currentPosition);
+          console.log('[GameScene] Player position corrected to:', currentPosition);
+        }
+      });
+      
+      // Show visual feedback for rejection
+      this.showMovementRejectionFeedback(reason);
+    }
+  }
+
+  // Show visual feedback when movement is rejected
+  private showMovementRejectionFeedback(reason: string): void {
+    if (!this.player) return;
+    
+    // Create temporary text showing the rejection reason
+    const feedbackText = this.add.text(
+      this.player.x + this.tileSize / 2,
+      this.player.y - 20,
+      `❌ ${reason}`,
+      {
+        fontSize: '12px',
+        color: '#ff6b6b',
+        backgroundColor: '#000000',
+        padding: { x: 6, y: 3 }
+      }
+    );
+    
+    feedbackText.setOrigin(0.5, 1);
+    
+    // Animate the feedback text
+    this.tweens.add({
+      targets: feedbackText,
+      y: feedbackText.y - 30,
+      alpha: 0,
+      duration: 2000,
+      ease: 'Power2',
+      onComplete: () => {
+        feedbackText.destroy();
+      }
+    });
   }
 
   // Update loop

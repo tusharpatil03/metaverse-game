@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import styles from './ProtectedRoute.module.css';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,8 +14,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   // Show loading spinner while checking authentication
   if (isLoading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
         <p>Loading...</p>
       </div>
     );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import styles from './Signup.module.css';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -105,19 +106,17 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-card">
+    <div className={styles.container}>
+      <div className={styles.card}>
         <h1>Join the Metaverse</h1>
-        <p className="signup-subtitle">Create your account to get started</p>
+        <p className={styles.subtitle}>Create your account to get started</p>
         
-        <form onSubmit={handleSubmit} className="signup-form">
+        <form onSubmit={handleSubmit} className={styles.form}>
           {errors.general && (
-            <div className="error-message general-error">
-              {errors.general}
-            </div>
+            <div className={styles.errorBox}>{errors.general}</div>
           )}
           
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="username">Username *</label>
             <input
               type="text"
@@ -125,34 +124,34 @@ const Signup: React.FC = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className={errors.username ? 'error' : ''}
+              className={`${styles.input} ${errors.username ? styles.inputError : ''}`}
               placeholder="Choose a username"
               disabled={isSubmitting}
             />
             {errors.username && (
-              <span className="error-message">{errors.username}</span>
+              <span className={styles.errorMessage}>{errors.username}</span>
             )}
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="type">Account Type *</label>
             <select
               id="type"
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className={errors.type ? 'error' : ''}
+              className={`${styles.select} ${errors.type ? styles.inputError : ''}`}
               disabled={isSubmitting}
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
             {errors.type && (
-              <span className="error-message">{errors.type}</span>
+              <span className={styles.errorMessage}>{errors.type}</span>
             )}
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="email">Email (optional)</label>
             <input
               type="email"
@@ -160,16 +159,16 @@ const Signup: React.FC = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={errors.email ? 'error' : ''}
+              className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
               placeholder="Enter your email"
               disabled={isSubmitting}
             />
             {errors.email && (
-              <span className="error-message">{errors.email}</span>
+              <span className={styles.errorMessage}>{errors.email}</span>
             )}
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="password">Password *</label>
             <input
               type="password"
@@ -177,16 +176,16 @@ const Signup: React.FC = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={errors.password ? 'error' : ''}
+              className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
               placeholder="Create a password"
               disabled={isSubmitting}
             />
             {errors.password && (
-              <span className="error-message">{errors.password}</span>
+              <span className={styles.errorMessage}>{errors.password}</span>
             )}
           </div>
 
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label htmlFor="confirmPassword">Confirm Password *</label>
             <input
               type="password"
@@ -194,28 +193,28 @@ const Signup: React.FC = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={errors.confirmPassword ? 'error' : ''}
+              className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''}`}
               placeholder="Confirm your password"
               disabled={isSubmitting}
             />
             {errors.confirmPassword && (
-              <span className="error-message">{errors.confirmPassword}</span>
+              <span className={styles.errorMessage}>{errors.confirmPassword}</span>
             )}
           </div>
 
           <button
             type="submit"
-            className="signup-button"
+            className={styles.button}
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
-        <div className="signup-footer">
+        <div className={styles.footer}>
           <p>
             Already have an account?{' '}
-            <Link to="/login" className="login-link">
+            <Link to="/login" className={styles.link}>
               Sign in here
             </Link>
           </p>

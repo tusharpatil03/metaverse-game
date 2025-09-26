@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useSpace } from '../contexts/SpaceContext';
-import type { Space } from '../types/space';
-import CreateSpaceModal from './CreateSpaceModal';
+import { useSpace } from '../../contexts/SpaceContext';
+import type { Space } from '../../types/space';
+import CreateSpaceModal from '../CreateSpaceModal/CreateSpaceModal';
+import styles from './SpaceSelector.module.css';
 
 const SpaceSelector: React.FC = () => {
   const { spaces, isLoading, error, selectSpace, fetchSpaces } = useSpace();
@@ -29,29 +30,29 @@ const SpaceSelector: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="space-selector loading">
-        <div className="loading-spinner"></div>
+      <div className={`${styles.spaceSelector} ${styles.loading}`}>
+        <div className={styles.loadingSpinner}></div>
         <p>Loading spaces...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-selector">
-      <div className="space-selector-header">
+    <div className={styles.spaceSelector}>
+      <div className={styles.header}>
         <h2>🌐 Select a Space</h2>
         <p>Choose a space to enter the metaverse</p>
-        <div className="space-actions">
+        <div className={styles.actions}>
           <button 
             onClick={handleRefresh} 
-            className="refresh-button"
+            className={styles.refreshButton}
             disabled={isLoading}
           >
             🔄 Refresh
           </button>
           <button 
             onClick={handleCreateSpace} 
-            className="create-space-button"
+            className={styles.createSpaceButton}
           >
             ➕ Create Space
           </button>
@@ -59,20 +60,20 @@ const SpaceSelector: React.FC = () => {
       </div>
 
       {error && (
-        <div className="error-message">
+        <div className={styles.errorMessage}>
           <p>❌ {error}</p>
-          <button onClick={handleRefresh} className="retry-button">
+          <button onClick={handleRefresh} className={styles.retryButton}>
             Try Again
           </button>
         </div>
       )}
 
-      <div className="spaces-grid">
+      <div className={styles.spacesGrid}>
         {spaces.length === 0 ? (
-          <div className="no-spaces">
+          <div className={styles.noSpaces}>
             <h3>No spaces available</h3>
             <p>Create your first space to get started!</p>
-            <button onClick={handleCreateSpace} className="create-first-space">
+            <button onClick={handleCreateSpace} className={styles.createFirstSpace}>
               Create Your First Space
             </button>
           </div>
@@ -80,46 +81,46 @@ const SpaceSelector: React.FC = () => {
           spaces.map((space) => (
             <div 
               key={space.id} 
-              className={`space-card ${selectedSpaceId === space.id ? 'selected' : ''}`}
+              className={`${styles.spaceCard} ${selectedSpaceId === space.id ? styles.selected : ''}`}
               onClick={() => handleSpaceSelect(space)}
             >
-              <div className="space-thumbnail">
+              <div className={styles.spaceThumbnail}>
                 {space.thumbnail ? (
                   <img src={space.thumbnail} alt={space.name} />
                 ) : (
-                  <div className="default-thumbnail">
-                    <span className="space-icon">🏠</span>
+                  <div className={styles.defaultThumbnail}>
+                    <span className={styles.spaceIcon}>🏠</span>
                   </div>
                 )}
               </div>
               
-              <div className="space-info">
-                <h3 className="space-name">{space.name}</h3>
+              <div className={styles.spaceInfo}>
+                <h3 className={styles.spaceName}>{space.name}</h3>
                 {space.description && (
-                  <p className="space-description">{space.description}</p>
+                  <p className={styles.spaceDescription}>{space.description}</p>
                 )}
                 
-                <div className="space-details">
-                  <div className="space-size">
+                <div className={styles.spaceDetails}>
+                  <div className={styles.spaceSize}>
                     📐 {space.width} × {space.height}
                   </div>
-                  <div className="space-users">
+                  <div className={styles.spaceUsers}>
                     👥 {space.currentUsers || 0}
                     {space.maxUsers && ` / ${space.maxUsers}`}
                   </div>
-                  <div className="space-visibility">
+                  <div className={styles.spaceVisibility}>
                     {space.isPublic ? '🌍 Public' : '🔒 Private'}
                   </div>
                 </div>
                 
-                <div className="space-meta">
+                <div className={styles.spaceMeta}>
                   <small>Created: {new Date(space.createdAt).toLocaleDateString()}</small>
                 </div>
               </div>
               
-              <div className="space-actions-overlay">
+              <div className={styles.spaceActionsOverlay}>
                 <button 
-                  className="enter-space-button"
+                  className={styles.enterSpaceButton}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleSpaceSelect(space);
@@ -144,6 +145,7 @@ const SpaceSelector: React.FC = () => {
       )}
     </div>
   );
-};
+}
+;
 
 export default SpaceSelector;

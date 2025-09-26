@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import styles from "./Login.module.css";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    type: 'user' as 'admin' | 'user',
+    username: "",
+    password: "",
+    type: "user" as "admin" | "user",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    
-    // Clear error when user starts typing
+
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: '',
+        [name]: "",
       }));
     }
   };
@@ -34,13 +36,13 @@ const Login: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = "Username is required";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     setErrors(newErrors);
@@ -49,7 +51,7 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -59,19 +61,20 @@ const Login: React.FC = () => {
 
     try {
       await login(formData.username, formData.password, formData.type);
-      navigate('/game'); // Redirect to game page after successful login
+      navigate("/game");
     } catch (error: any) {
-      console.error('Login failed:', error);
-      
-      // Handle different error types
+      console.error("Login failed:", error);
+
       if (error.response?.status === 401) {
-        setErrors({ general: 'Invalid username or password' });
+        setErrors({ general: "Invalid username or password" });
       } else if (error.response?.status === 400) {
-        setErrors({ general: 'Please check your input and try again' });
-      } else if (error.code === 'NETWORK_ERROR' || !error.response) {
-        setErrors({ general: 'Unable to connect to server. Please try again later.' });
+        setErrors({ general: "Please check your input and try again" });
+      } else if (error.code === "NETWORK_ERROR" || !error.response) {
+        setErrors({
+          general: "Unable to connect to server. Please try again later.",
+        });
       } else {
-        setErrors({ general: 'Login failed. Please try again.' });
+        setErrors({ general: "Login failed. Please try again." });
       }
     } finally {
       setIsSubmitting(false);
@@ -79,19 +82,18 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h1>Welcome Back</h1>
-        <p className="login-subtitle">Sign in to enter the metaverse</p>
-        
-        <form onSubmit={handleSubmit} className="login-form">
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>Welcome Back</h1>
+        <p className={styles.subtitle}>Sign in to enter the metaverse</p>
+
+        <form onSubmit={handleSubmit} className={styles.form}>
           {errors.general && (
-            <div className="error-message general-error">
-              {errors.general}
-            </div>
+            <div className={styles.errorBox}>{errors.general}</div>
           )}
-          
-          <div className="form-group">
+
+          {/* Username */}
+          <div className={styles.formGroup}>
             <label htmlFor="username">Username</label>
             <input
               type="text"
@@ -99,34 +101,38 @@ const Login: React.FC = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className={errors.username ? 'error' : ''}
               placeholder="Enter your username"
               disabled={isSubmitting}
+              className={`${styles.input} ${
+                errors.username ? styles.inputError : ""
+              }`}
             />
             {errors.username && (
-              <span className="error-message">{errors.username}</span>
+              <span className={styles.errorMessage}>{errors.username}</span>
             )}
           </div>
 
-          <div className="form-group">
+          {/* Account Type */}
+          <div className={styles.formGroup}>
             <label htmlFor="type">Account Type</label>
             <select
               id="type"
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className={errors.type ? 'error' : ''}
               disabled={isSubmitting}
+              className={styles.select}
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
             {errors.type && (
-              <span className="error-message">{errors.type}</span>
+              <span className={styles.errorMessage}>{errors.type}</span>
             )}
           </div>
 
-          <div className="form-group">
+          {/* Password */}
+          <div className={styles.formGroup}>
             <label htmlFor="password">Password</label>
             <input
               type="password"
@@ -134,31 +140,32 @@ const Login: React.FC = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={errors.password ? 'error' : ''}
               placeholder="Enter your password"
               disabled={isSubmitting}
+              className={`${styles.input} ${
+                errors.password ? styles.inputError : ""
+              }`}
             />
             {errors.password && (
-              <span className="error-message">{errors.password}</span>
+              <span className={styles.errorMessage}>{errors.password}</span>
             )}
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            className="login-button"
             disabled={isSubmitting}
+            className={styles.button}
           >
-            {isSubmitting ? 'Signing In...' : 'Sign In'}
+            {isSubmitting ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>
-            Don't have an account?{' '}
-            <Link to="/signup" className="signup-link">
-              Sign up here
-            </Link>
-          </p>
+        <div className={styles.footer}>
+          Don’t have an account?{" "}
+          <Link to="/signup" className={styles.link}>
+            Sign up here
+          </Link>
         </div>
       </div>
     </div>

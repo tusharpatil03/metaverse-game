@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Phaser from 'phaser';
-import { GameScene } from '../game/scenes/GameScene';
-import { GameLifecycleManager } from '../game/managers/GameLifecycleManager';
-import type { GameManager, GameState, SceneData } from '../types/game';
-import type { Space } from '../types/space';
+import { GameScene } from '../../game/scenes/GameScene';
+import { GameLifecycleManager } from '../../game/managers/GameLifecycleManager';
+import type { GameManager, GameState, SceneData } from '../../types/game';
+import type { Space } from '../../types/space';
+import styles from './Phaser.module.css';
 
 interface PhaserGameProps {
   space: Space;
@@ -21,7 +22,7 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
   const gameRef = useRef<HTMLDivElement>(null);
   const phaserGameRef = useRef<Phaser.Game | null>(null);
   const gameManagerRef = useRef<GameManager | null>(null);
-  
+
   const [gameState, setGameState] = useState<GameState>({
     currentSpace: null,
     playerPosition: { x: 0, y: 0 },
@@ -35,14 +36,14 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
     type: Phaser.AUTO,
     width: 800,
     height: 600,
-    parent: 'phaser-game-container',
-    backgroundColor: '#2c3e50',
+    parent: "phaser-game-container",
+    backgroundColor: "#2c3e50",
     physics: {
-      default: 'arcade',
+      default: "arcade",
       arcade: {
         gravity: { x: 0, y: 0 }, // No gravity for top-down view
-        debug: false
-      }
+        debug: false,
+      },
     },
     scene: [GameScene], // Use our new scene architecture
     scale: {
@@ -50,37 +51,41 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
       autoCenter: Phaser.Scale.CENTER_BOTH,
       min: {
         width: 400,
-        height: 300
+        height: 300,
       },
       max: {
         width: 1600,
-        height: 1200
-      }
-    }
+        height: 1200,
+      },
+    },
   };
 
   // Initialize game scene with space data
   const initializeGameScene = (game: Phaser.Game) => {
-    const gameScene = game.scene.getScene('GameScene') as GameScene;
-    
+    console.log("Initializing game scene");
+    const gameScene = game.scene.getScene("GameScene") as GameScene;
+    console.log(gameScene);
+
     if (gameScene) {
       // Setup scene event listeners
-      gameScene.events.on('game-scene-ready', (data: any) => {
-        console.log('[PhaserGame] Game scene ready:', data);
-        
+      gameScene.events.on("game-scene-ready", (data: any) => {
+        console.log("[PhaserGame] Game scene ready:", data);
+
         // Store scene reference in game manager
         if (gameManagerRef.current) {
           gameManagerRef.current.scene = gameScene;
         }
-        
+
         // Update game state
-        setGameState(prev => ({
+        setGameState((prev) => ({
           ...prev,
           currentSpace: space,
           isGameReady: true,
           isLoading: false,
-          error: null
+          error: null,
         }));
+
+        console.log(gameState);
 
         // Call onGameReady callback
         if (onGameReady && gameManagerRef.current) {
@@ -88,13 +93,13 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
         }
       });
 
-      gameScene.events.on('player-moved', (data: any) => {
-        console.log('[PhaserGame] Player moved:', data);
-        
+      gameScene.events.on("player-moved", (data: any) => {
+        console.log("[PhaserGame] Player moved:", data);
+
         // Update game state
-        setGameState(prev => ({
+        setGameState((prev) => ({
           ...prev,
-          playerPosition: { x: data.gridX, y: data.gridY }
+          playerPosition: { x: data.gridX, y: data.gridY },
         }));
 
         // Call onPlayerMove callback if provided
@@ -103,19 +108,20 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
         }
       });
 
-      gameScene.events.on('movement-rejected', (data: any) => {
-        console.log('[PhaserGame] Movement rejected:', data);
+      gameScene.events.on("movement-rejected", (data: any) => {
+        console.log("[PhaserGame] Movement rejected:", data);
         // Could emit this to React for UI feedback
       });
 
-      gameScene.events.on('scene-error', (error: any) => {
-        console.error('[PhaserGame] Scene error:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Scene error occurred';
-        
-        setGameState(prev => ({
+      gameScene.events.on("scene-error", (error: any) => {
+        console.error("[PhaserGame] Scene error:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "Scene error occurred";
+
+        setGameState((prev) => ({
           ...prev,
           isLoading: false,
-          error: errorMessage
+          error: errorMessage,
         }));
 
         if (onGameError) {
@@ -127,57 +133,60 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
       const sceneData: SceneData = {
         space,
         playerSpawn: { x: 1, y: 1 }, // Default spawn position
-        players: [] // No other players initially
+        players: [], // No other players initially
       };
 
-      gameScene.scene.start('GameScene', sceneData);
+      gameScene.scene.start("GameScene", sceneData);
     }
   };
 
   // Initialize game manager
   useEffect(() => {
+    console.log("Initilizing game manager");
     const gameManager: GameManager = {
       scene: null,
       isReady: false,
-      
+
       loadSpace: async (newSpace: Space) => {
-        console.log('[GameManager] Loading space:', newSpace.name);
+        console.log("[GameManager] Loading space:", newSpace.name);
         // This will be implemented when we add scene switching
         return Promise.resolve();
       },
-      
+
       movePlayer: (x: number, y: number) => {
-        console.log('[GameManager] Moving player to:', x, y);
+        console.log("[GameManager] Moving player to:", x, y);
         const scene = gameManagerRef.current?.scene as GameScene;
         if (scene && scene.movePlayerTo) {
           return scene.movePlayerTo(x, y);
         }
         return false;
       },
-      
+
       getPlayerPosition: () => {
         const scene = gameManagerRef.current?.scene as GameScene;
         if (scene && scene.getPlayerPosition) {
           const pos = scene.getPlayerPosition();
-          return pos ? { x: pos.gridX, y: pos.gridY } : gameState.playerPosition;
+          return pos
+            ? { x: pos.gridX, y: pos.gridY }
+            : gameState.playerPosition;
         }
         return gameState.playerPosition;
       },
-      
+
       destroy: () => {
-        console.log('[GameManager] Destroying game...');
+        console.log("[GameManager] Destroying game...");
         if (phaserGameRef.current) {
           phaserGameRef.current.destroy(true);
           phaserGameRef.current = null;
         }
       },
-      
+
       resize: (width: number, height: number) => {
-        console.log('[GameManager] Resizing game to:', width, height);
+        console.log("[GameManager] Resizing game to:", width, height);
         if (phaserGameRef.current) {
           phaserGameRef.current.scale.resize(width, height);
         }
-      }
+      },
     };
 
     gameManagerRef.current = gameManager;
@@ -185,44 +194,46 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
 
   // Initialize Phaser game
   useEffect(() => {
+    console.log("Initializing Phaser game");
+    console.log(gameRef.current);
     if (!gameRef.current) return;
 
-    console.log('[PhaserGame] Initializing Phaser game for space:', space.name);
-    
-    setGameState(prev => ({
+    console.log("[PhaserGame] Initializing Phaser game for space:", space.name);
+
+    setGameState((prev) => ({
       ...prev,
       isLoading: true,
-      error: null
+      error: null,
     }));
 
     try {
       // Create Phaser game instance
       const game = new Phaser.Game({
         ...gameConfig,
-        parent: gameRef.current
+        parent: gameRef.current,
       });
 
       phaserGameRef.current = game;
 
       // Handle game boot
-      game.events.once('ready', () => {
-        console.log('[PhaserGame] Phaser game booted successfully');
+      game.events.once("ready", () => {
+        console.log("[PhaserGame] Phaser game booted successfully");
         if (gameManagerRef.current) {
           gameManagerRef.current.isReady = true;
         }
-        
+
         // Initialize the game scene
         initializeGameScene(game);
       });
-
     } catch (error) {
-      console.error('[PhaserGame] Failed to initialize Phaser:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize game';
-      
-      setGameState(prev => ({
+      console.error("[PhaserGame] Failed to initialize Phaser:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to initialize game";
+
+      setGameState((prev) => ({
         ...prev,
         isLoading: false,
-        error: errorMessage
+        error: errorMessage,
       }));
 
       if (onGameError) {
@@ -232,7 +243,7 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
 
     // Cleanup function
     return () => {
-      console.log('[PhaserGame] Cleaning up Phaser game');
+      console.log("[PhaserGame] Cleaning up Phaser game");
       if (phaserGameRef.current) {
         phaserGameRef.current.destroy(true);
         phaserGameRef.current = null;
@@ -243,9 +254,10 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
   // Initialize game lifecycle management
   useEffect(() => {
     if (!gameRef.current) return;
+    console.log("Initializing game lifecycle management");
 
     const lifecycleManager = GameLifecycleManager.getInstance();
-    
+
     const handleResize = (width: number, height: number) => {
       if (gameManagerRef.current) {
         gameManagerRef.current.resize(width, height);
@@ -262,9 +274,9 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
   // Render loading state
   if (gameState.isLoading) {
     return (
-      <div className="phaser-game-container loading">
-        <div className="loading-content">
-          <div className="loading-spinner"></div>
+      <div className={`${styles.container} ${styles.loading}`}>
+        <div className={styles.loadingContent}>
+          <div className={styles.loadingSpinner}></div>
           <p>Loading game world...</p>
           <small>Initializing {space.name}</small>
         </div>
@@ -275,13 +287,13 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
   // Render error state
   if (gameState.error) {
     return (
-      <div className="phaser-game-container error">
-        <div className="error-content">
+      <div className={`${styles.container} ${styles.error}`}>
+        <div className={styles.errorContent}>
           <h3>❌ Game Error</h3>
           <p>{gameState.error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="retry-button"
+          <button
+            onClick={() => window.location.reload()}
+            className={styles.retryButton}
           >
             Retry
           </button>
@@ -291,28 +303,59 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
   }
 
   // Render game
+  // (Keep all the hooks and logic from before the return statement)
+
+  // Render game
   return (
-    <div className="phaser-game-wrapper">
-      <div 
+    <div className={styles.wrapper}>
+      {/* This div is now ALWAYS rendered, so the ref will be attached */}
+      <div
         ref={gameRef}
         id="phaser-game-container"
-        className="phaser-game-container"
+        className={styles.container}
       />
-      
-      {/* Game info overlay */}
-      <div className="game-info-overlay">
-        <div className="space-info">
-          <span className="space-name">{space.name}</span>
-          <span className="space-dimensions">{space.width}×{space.height}</span>
+
+      {/* Conditionally render the loading overlay */}
+      {gameState.isLoading && (
+        <div className={`${styles.overlay} ${styles.loading}`}>
+          <div className={styles.loadingContent}>
+            <div className={styles.loadingSpinner}></div>
+            <p>Loading game world...</p>
+            <small>Initializing {space.name}</small>
+          </div>
         </div>
-        <div className="game-status">
-          {gameState.isGameReady ? (
-            <span className="status-ready">🟢 Ready</span>
-          ) : (
-            <span className="status-loading">🟡 Loading...</span>
-          )}
+      )}
+
+      {/* Conditionally render the error overlay */}
+      {gameState.error && (
+        <div className={`${styles.overlay} ${styles.error}`}>
+          <div className={styles.errorContent}>
+            <h3>❌ Game Error</h3>
+            <p>{gameState.error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className={styles.retryButton}
+            >
+              Retry
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Game info overlay (can be shown when the game is ready) */}
+      {gameState.isGameReady && (
+        <div className={styles.infoOverlay}>
+          <div className={styles.spaceInfo}>
+            <span className={styles.spaceName}>{space.name}</span>
+            <span className={styles.spaceDimensions}>
+              {space.width}×{space.height}
+            </span>
+          </div>
+          <div className={styles.gameStatus}>
+            <span className={styles.statusReady}>🟢 Ready</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
